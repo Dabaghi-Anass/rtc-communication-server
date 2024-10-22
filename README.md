@@ -22,7 +22,7 @@ The communication server is a backend service built using Fastify. It handles We
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/elhoussineazerhoune/Clarity-Fiber.git
+git clone https://github.com/Dabaghi-Anass/rtc-communication-server.git
 ```
 
 ### 2. Navigate to the Directory
@@ -30,7 +30,7 @@ git clone https://github.com/elhoussineazerhoune/Clarity-Fiber.git
 Navigate to the directory where you cloned the repository:
 
 ```bash
-cd Clarity-Fiber/backend/communication-server
+cd rtc-communication-server
 ```
 
 ### 3. Install Dependencies
@@ -67,4 +67,4 @@ The communication server has the following API endpoints:
 
 ### 1. WebSocket Connection
 
-The communication server establishes a WebSocket connection at the `/ws` endpoint.
+The communication server establishes a WebSocket connection at the `/` endpoint.
