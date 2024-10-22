@@ -1,0 +1,35 @@
+{
+	"name": "communication-server",
+	"version": "0.0.1",
+	"description": "a node js server to handle real time connections",
+	"main": "index.ts",
+	"scripts": {
+		"clean": "rimraf dist && npx tsc",
+		"prestart": "npm run clean",
+		"start": "ts-node src/index.ts",
+		"dev": "ts-node-dev --respawn src/index.ts"
+	},
+	"keywords": [
+		"web_socket",
+		"web_rtc",
+		"mongo_db",
+		"redis"
+	],
+	"author": "anass dabaghi",
+	"license": "ISC",
+	"dependencies": {
+		"@fastify/cors": "^10.0.1",
+		"chalk": "^5.3.0",
+		"dotenv": "^16.4.5",
+		"fastify": "^5.0.0",
+		"ioredis": "^1.0.11",
+		"mongoose": "^8.7.2",
+		"ts-node": "^10.9.2"
+	},
+	"devDependencies": {
+		"@types/node": "^22.7.6",
+		"rimraf": "^6.0.1",
+		"ts-node-dev": "^2.0.0",
+		"tslib": "^2.8.0"
+	}
+}
