@@ -7,7 +7,6 @@ enum ActionAfterExpiration {
 	TIMEOUT_USER = "timeout user",
 }
 
-type PollActionTarget = {};
 //message entity
 const PollMessageSchema = new mongoose.Schema({
 	...MessageSchema.obj,
@@ -27,9 +26,11 @@ const PollMessageSchema = new mongoose.Schema({
 	targetType: { type: String, required: true },
 	actionAfterExpiration: {
 		type: ActionAfterExpiration,
-		// target: PollActionTarget,
-		required: true,
+		target: String,
 	},
 });
 
-export const PollMessageModel = mongoose.model("Message", PollMessageSchema);
+export const PollMessageModel = MessageSchema.discriminator(
+	"PollMessage",
+	PollMessageSchema
+);

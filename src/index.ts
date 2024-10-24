@@ -4,14 +4,14 @@ import Fastify from "fastify";
 import { Server } from "socket.io";
 import { connectDatabase } from "./connections/mongodb";
 import { handleSocketConnections } from "./controllers/websocket.io";
-import { CachingService } from "./services/caching";
-import { ICachingService } from "./types/services";
+import { MessageModel } from "./models/message";
+import { AttachmentMediaType, MessageType } from "./types/chat";
 import { getLogger } from "./utils/logger";
 dotenv.config();
 
 const port: number = parseInt(process.env.PORT || "3000");
 
-const cachingService: ICachingService = new CachingService();
+// const cachingService: ICachingService = new CachingService();
 
 const app = Fastify();
 
@@ -28,6 +28,24 @@ const io = new Server(app.server, {
 handleSocketConnections(io);
 connectDatabase();
 
+app.get("/create-message", async (request, reply) => {
+	const message = await MessageModel.create({
+		content: "Hello world",
+		sender: "system",
+		destination: "system",
+		type: MessageType.TEXT,
+		attachements: [
+			{
+				url: "https://example.com/image.jpg",
+				mediaType: AttachmentMediaType.IMAGE,
+			},
+		],
+	});
+
+	return await message.save();
+});
+
+app.get("/messages", async (request, reply) => MessageModel.find());
 app.get("/healthcheck", async (request, reply) => {
 	return { status: "ok", port };
 });

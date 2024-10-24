@@ -10,6 +10,7 @@ export class CachingService implements ICachingService {
 	private cachingClient: Redis;
 	constructor(cachingClient = redisClient) {
 		this.cachingClient = cachingClient;
+		this.cachingClient.connect();
 	}
 	get(key: string): Promise<string> {
 		return new Promise((resolve, reject) => {

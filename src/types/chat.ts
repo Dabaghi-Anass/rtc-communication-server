@@ -16,13 +16,3 @@ export enum AttachmentMediaType {
 	AUDIO = "audio",
 	FILE = "file",
 }
-
-export class MessageAttachement {
-	mediaType: AttachmentMediaType;
-	url: string;
-
-	constructor(mediaType: AttachmentMediaType, url: string) {
-		this.mediaType = mediaType;
-		this.url = url;
-	}
-}
