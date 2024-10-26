@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { getLogger } from "../utils/logger";
+import { createClient } from "redis";
 
 const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB } = process.env;
 
@@ -9,15 +9,12 @@ export function createRedisClient() {
 		db: parseInt(REDIS_DB),
 	});
 }
-var redisClient = createRedisClient();
-redisClient.on("connect", async () => {
-	const logger = await getLogger();
-	logger.success("Connected to Redis");
-});
-
-redisClient.on("error", (err) => {
-	console.error("Error connecting to Redis: ", err);
-});
-
-redisClient.connect();
-export default redisClient;
+export async function createRedisNativeClient() {
+	return await createClient({
+		password: REDIS_PASSWORD,
+		url: `redis://${REDIS_HOST}:${REDIS_PORT}`,
+		database: parseInt(REDIS_DB),
+	})
+		.on("error", (err) => console.log("Redis Client Error", err))
+		.connect();
+}

@@ -4,9 +4,12 @@ import { RedisChannels } from "../constants/redis-channels";
 import { IoChatEvent } from "../constants/socketio";
 import { getLogger } from "../utils/logger";
 
-function publishDisconnectEvent(socket, logger) {
-	logger.info("Client disconnected");
+function publishDisconnectEvent(socket, publisher) {
 	socket.broadcast.emit(IoChatEvent.USER_OFFLINE, "user left");
+	publisher.publish(
+		RedisChannels.USER_OFFLINE_CHANNEL,
+		JSON.stringify({ status: "offline" })
+	);
 }
 export async function handleSocketConnections(io: Server): Promise<void> {
 	//pub client to publish messages to redis
@@ -14,13 +17,31 @@ export async function handleSocketConnections(io: Server): Promise<void> {
 	const logger = await getLogger();
 	logger.success("Socket.io server started");
 
-	//subscribe to channel
-	subClient.subscribe(RedisChannels.MESSAGES_CHANNEL, (err, count) => {
-		if (err) {
-			logger.error("Error subscribing to channel: ", err);
+	//subscribe to messages channel
+	subClient.subscribe(
+		RedisChannels.MESSAGE_CREATED_CHANNEL,
+		(message, channel) => {
+			if (message) {
+				logger.warn(
+					`reseived message from channel: ${channel}`,
+					JSON.parse(message)
+				);
+			}
 		}
-		logger.info(`Subscribed to ${count} channel`);
-	});
+	);
+
+	//subscribe to user offline channel
+	subClient.subscribe(
+		RedisChannels.USER_OFFLINE_CHANNEL,
+		(message, channel) => {
+			if (message) {
+				logger.warn(
+					`reseived message from channel: ${channel}`,
+					JSON.parse(message)
+				);
+			}
+		}
+	);
 
 	io.on("connection", (socket) => {
 		logger.info("Client connected", socket.id);
@@ -41,7 +62,7 @@ export async function handleSocketConnections(io: Server): Promise<void> {
 		socket.on(IoChatEvent.MESSAGE, (data) => {
 			logger.info("Message received: ", data);
 			pubClient.publish(
-				RedisChannels.MESSAGES_CHANNEL,
+				RedisChannels.MESSAGE_CREATED_CHANNEL,
 				JSON.stringify(data)
 			);
 			socket.broadcast.emit(IoChatEvent.MESSAGE, data);
@@ -59,16 +80,8 @@ export async function handleSocketConnections(io: Server): Promise<void> {
 			socket.broadcast.emit(IoChatEvent.TYPING_STOP, data);
 		});
 		//disconnect event
-		socket.on("disconnect", () => publishDisconnectEvent(socket, logger));
-	});
-	subClient.subscribe(RedisChannels.MESSAGES_CHANNEL, (err, count) => {
-		if (err) {
-			logger.error("Error subscribing to channel: ", err);
-		}
-		logger.info(`Subscribed to ${count} channel`);
-	});
-	subClient.on("message", (channel, message) => {
-		logger.info("Message received from channel: ", message);
-		io.emit(IoChatEvent.MESSAGE, JSON.parse(message));
+		socket.on("disconnect", () =>
+			publishDisconnectEvent(socket, pubClient)
+		);
 	});
 }

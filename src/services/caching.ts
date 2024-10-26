@@ -1,5 +1,4 @@
 import { Redis } from "ioredis";
-import redisClient from "../connections/redis";
 import { ICachingService } from "../types/services";
 
 /**
@@ -8,7 +7,7 @@ import { ICachingService } from "../types/services";
  */
 export class CachingService implements ICachingService {
 	private cachingClient: Redis;
-	constructor(cachingClient = redisClient) {
+	constructor(cachingClient) {
 		this.cachingClient = cachingClient;
 		this.cachingClient.connect();
 	}
