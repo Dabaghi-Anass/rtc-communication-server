@@ -3,7 +3,6 @@ import { getPubSubClients } from "../connections/pub-sub";
 import { RedisChannels } from "../constants/redis-channels";
 import { IoChatEvent } from "../constants/socketio";
 import { getLogger } from "../utils/logger";
-
 function publishDisconnectEvent(socket, publisher) {
 	socket.broadcast.emit(IoChatEvent.USER_OFFLINE, "user left");
 	publisher.publish(

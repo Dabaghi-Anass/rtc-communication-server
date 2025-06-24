@@ -1,3 +1,6 @@
+import mongoose from "mongoose";
+import { getLogger } from "./logger";
+
 /**
  * Calls a function safely, returning an error if the function throws an error.
  * @param fn The promise to resolve.
@@ -12,4 +15,24 @@ export async function catchError<T>(
 	return promise
 		.then((result) => [undefined, result] as [undefined, T])
 		.catch((error) => [error]);
+}
+
+export async function runInTransaction(
+	callback: () => Promise<any>
+): Promise<any> {
+	// Start transaction
+	let callbackResult;
+	const session = await mongoose.startSession();
+	try {
+		session.startTransaction();
+		callbackResult = await callback();
+		await session.commitTransaction();
+		(await getLogger()).success("Transaction committed.");
+	} catch (error) {
+		await session.abortTransaction();
+		(await getLogger()).error("Transaction aborted due to error:", error);
+	} finally {
+		session.endSession();
+	}
+	return callbackResult;
 }

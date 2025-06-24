@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
-import { randomUUID } from "node:crypto";
 import { AttachmentMediaType, MessageType } from "../types/chat";
+import { BaseSchema } from "./base-schema";
 //message entity
 
 export const MessageSchema = new mongoose.Schema({
-	id: { type: String, default: randomUUID() },
-	createdAt: { type: Date, default: Date.now },
-	updatedAt: { type: Date, default: Date.now },
+	...BaseSchema,
 	attachements: [
 		{
 			url: String,
@@ -24,6 +22,10 @@ export const MessageSchema = new mongoose.Schema({
 		type: String,
 		enum: Object.values(MessageType),
 		default: "text",
+	},
+	pollId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Poll",
 	},
 });
 

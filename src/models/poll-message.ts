@@ -1,15 +1,10 @@
 import mongoose from "mongoose";
-import { MessageSchema } from "./message";
-
-enum ActionAfterExpiration {
-	BAN_USER = "ban user",
-	DELETE_MESSAGE = "delete message",
-	TIMEOUT_USER = "timeout user",
-}
+import { ActionAfterExpiration } from "../types/utils";
+import { BaseSchema } from "./base-schema";
 
 //message entity
-const PollMessageSchema = new mongoose.Schema({
-	...MessageSchema.obj,
+const PollSchema = new mongoose.Schema({
+	...BaseSchema,
 	options: [{ type: String, required: true }],
 	voters: [
 		{
@@ -21,16 +16,15 @@ const PollMessageSchema = new mongoose.Schema({
 			required: true,
 		},
 	],
-
 	expirationDate: { type: Date, required: true },
 	targetType: { type: String, required: true },
 	actionAfterExpiration: {
-		type: ActionAfterExpiration,
+		type: {
+			type: String,
+			enum: Object.values(ActionAfterExpiration),
+		},
 		target: String,
 	},
 });
 
-export const PollMessageModel = MessageSchema.discriminator(
-	"PollMessage",
-	PollMessageSchema
-);
+export const PollModel = mongoose.model("Poll", PollSchema);
