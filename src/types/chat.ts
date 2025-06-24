@@ -8,6 +8,7 @@ export enum MessageType {
 	STICKER = "sticker",
 	FILE = "file",
 	SYSTEM = "system",
+	POLL = "poll",
 }
 
 export enum AttachmentMediaType {
