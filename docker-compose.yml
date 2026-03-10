@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Redis service for caching
+  redis:
+    image: redis:7-alpine
+    container_name: rtc-redis
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - rtc-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:8
+    container_name: rtc-mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: rtc_db
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - rtc-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Your RTC Communication Server
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rtc-app
+    ports:
+      - '8080:8080'
+    environment:
+      NODE_ENV: development
+      PORT: 8080
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
+      REDIS_DB: 0
+      MONGO_DB_CONNECTION_URI: mongodb://mongodb:27017/rtc-messages
+      CORS_ORIGIN: '*'
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - rtc-network
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  mongodb-data:
+
+networks:
+  rtc-network:
+    driver: bridge
