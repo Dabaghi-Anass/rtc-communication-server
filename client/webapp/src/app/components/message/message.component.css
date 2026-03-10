@@ -1,0 +1,5 @@
+.message {
+  background-color: var(--yellow);
+  border-radius: var(--radius-normal);
+  padding: 0.3rem 1rem;
+}

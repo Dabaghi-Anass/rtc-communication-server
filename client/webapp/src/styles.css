@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --yellow-hue: 51;
+  --pink-hue: 322;
+  --blue-hue: 214;
+  --yellow: hsl(var(--yellow-hue), 100%, 62%);
+  --pink: hsl(var(--pink-hue), 100%, 83%);
+  --blue: hsl(var(--blue-hue), 94%, 88%);
+  --background-color: #f8f9fa;
+  --text-color: #212529;
+
+  /*borders*/
+
+  --radius-normal: 15px;
+  --radius-small: 8px;
+
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
