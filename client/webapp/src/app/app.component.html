@@ -1,0 +1,18 @@
+<!-- <div class="controls" *ngIf="callManager">
+  <label>Room name: <input [(ngModel)]="callManager.room" /></label>
+  <button (click)="callManager.joinRoom()">Join Room</button>
+  <button (click)="callManager.leaveRoom()">Leave Room</button>
+  <button (click)="callManager.startCall()" [disabled]="!callManager.inRoom">
+    Call Room
+  </button>
+  <button (click)="callManager.hangup()" [disabled]="!callManager.inCall">
+    Hang Up
+  </button>
+</div>
+
+<div class="videos">
+  <video #localVideo autoplay muted playsinline></video>
+  <video #remoteVideo autoplay playsinline></video>
+</div> -->
+
+<router-outlet></router-outlet>

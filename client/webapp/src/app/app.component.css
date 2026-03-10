@@ -17,3 +17,20 @@ section {
   height: 100%;
   gap: 1rem;
 }
+
+.controls {
+  margin: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.controls input {
+  padding: 0.25rem;
+}
+
+.videos {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}

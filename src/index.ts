@@ -6,6 +6,10 @@ import { connectDatabase } from './connections/mongodb';
 import { handleSocketConnections } from './controllers/websocket.io';
 import { MessageModel } from './models/message';
 import { getLogger } from './utils/logger';
+import { AttachmentMediaType, MessageType } from './types/chat';
+import { ActionAfterExpiration } from './types/utils';
+import { runInTransaction } from './utils/utils';
+import { PollModel } from './models/poll-message';
 dotenv.config();
 
 const port: number = parseInt(process.env.PORT || '3000');
@@ -29,53 +33,53 @@ connectDatabase();
 
 // Define API routes under /api prefix
 async function registerApiRoutes(fastify: any) {
-  // fastify.get("/create-message", async (request, reply) => {
-  // 	const message = new MessageModel({
-  // 		content: "Hello world",
-  // 		sender: "system",
-  // 		destination: "system",
-  // 		type: MessageType.TEXT,
-  // 		attachements: [
-  // 			{
-  // 				url: "https://example.com/image.jpg",
-  // 				mediaType: AttachmentMediaType.IMAGE,
-  // 			},
-  // 		],
-  // 	});
+  fastify.get('/create-message', async (request, reply) => {
+    const message = new MessageModel({
+      content: 'Hello world',
+      sender: 'system',
+      destination: 'system',
+      type: MessageType.TEXT,
+      attachements: [
+        {
+          url: 'https://example.com/image.jpg',
+          mediaType: AttachmentMediaType.IMAGE,
+        },
+      ],
+    });
 
-  // 	return await message.save();
-  // });
+    return await message.save();
+  });
 
-  // fastify.get("/create-poll-message", async (request, reply) => {
-  // 	return await runInTransaction(async () => {
-  // 		const poll = new PollModel({
-  // 			options: ["yes", "no"],
-  // 			voters: [
-  // 				{
-  // 					userId: "123",
-  // 					option: "yes",
-  // 				},
-  // 			],
-  // 			expirationDate: new Date(),
-  // 			targetType: "all",
-  // 			actionAfterExpiration: {
-  // 				type: ActionAfterExpiration.TIMEOUT_USER,
-  // 				target: "123",
-  // 			},
-  // 		});
+  fastify.get('/create-poll-message', async (request, reply) => {
+    return await runInTransaction(async () => {
+      const poll = new PollModel({
+        options: ['yes', 'no'],
+        voters: [
+          {
+            userId: '123',
+            option: 'yes',
+          },
+        ],
+        expirationDate: new Date(),
+        targetType: 'all',
+        actionAfterExpiration: {
+          type: ActionAfterExpiration.TIMEOUT_USER,
+          target: '123',
+        },
+      });
 
-  // 		const savedPoll = await poll.save();
+      const savedPoll = await poll.save();
 
-  // 		const message = new MessageModel({
-  // 			content: "Do you like this poll?",
-  // 			sender: "system",
-  // 			destination: "system",
-  // 			type: MessageType.POLL,
-  // 			pollId: savedPoll._id,
-  // 		});
-  // 		return await message.save();
-  // 	});
-  // });
+      const message = new MessageModel({
+        content: 'Do you like this poll?',
+        sender: 'system',
+        destination: 'system',
+        type: MessageType.POLL,
+        pollId: savedPoll._id,
+      });
+      return await message.save();
+    });
+  });
 
   fastify.get('/messages', async (_, reply) => MessageModel.find());
   fastify.get('/healthcheck', async (request, reply) => {
