@@ -1,3 +1,9 @@
+.chat-container {
+  background-image: url(../../assets/images/chat_bg_pattern.svg);
+  background-size: 50%;
+  background-repeat: repeat;
+}
+
 .day-group {
   margin-bottom: 20px;
 }
