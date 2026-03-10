@@ -52,7 +52,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ''
       REDIS_DB: 0
-      MONGO_DB_CONNECTION_URI: mongodb://mongodb:27017/rtc-messages
+      MONGO_DB_CONNECTION_URI: mongodb://admin:password@mongodb:27017/rtc-messages?authSource=admin
       CORS_ORIGIN: '*'
     depends_on:
       redis:

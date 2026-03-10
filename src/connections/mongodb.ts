@@ -25,10 +25,12 @@ export async function connectDatabase(): Promise<void> {
   };
 
   // support full connection URI or individual components
+  console.log('Constructing MongoDB URI from environment variables');
   const uri = process.env.MONGO_DB_CONNECTION_URI
     ? process.env.MONGO_DB_CONNECTION_URI
-    : `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+    : `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
 
+  console.log('MongoDB URI:', uri);
   await mongoose
     .connect(uri, options)
     .then(() => {
