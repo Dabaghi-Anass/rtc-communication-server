@@ -1,17 +1,47 @@
 :root {
+  /* Colors */
   --yellow-hue: 51;
   --pink-hue: 322;
   --blue-hue: 214;
   --yellow: hsl(var(--yellow-hue), 100%, 62%);
   --pink: hsl(var(--pink-hue), 100%, 83%);
   --blue: hsl(var(--blue-hue), 94%, 88%);
+  --gray: hsl(0, 0%, 92%);
+  --gray-dark: hsl(0, 0%, 32%);
   --background-color: #f8f9fa;
   --text-color: #212529;
 
-  /*borders*/
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
+  /* Borders */
+  --radius-lg: 18px;
+  --radius-xl: 25px;
+  --radius-2xl: 45px;
   --radius-normal: 15px;
   --radius-small: 8px;
+  --border-width: 1px;
+  --border-color: #dee2e6;
 
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Typography */
+  font-family: Arial, Helvetica, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 300ms ease-in-out;
 }

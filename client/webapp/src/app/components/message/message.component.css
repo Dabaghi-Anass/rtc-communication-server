@@ -1,5 +1,25 @@
 .message {
+  background-color: var(--gray);
+  border-radius: var(--radius-xl);
+  border-bottom-left-radius: 0;
+  padding: 0.2rem 1rem;
+  width: fit-content;
+}
+
+.message.own {
   background-color: var(--yellow);
-  border-radius: var(--radius-normal);
-  padding: 0.3rem 1rem;
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: 0;
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: var(--gray-dark);
+  margin-top: 0.25rem;
+}
+
+:has(.message.own) {
+  text-align: right;
+  margin-left: auto;
+  width: fit-content;
 }

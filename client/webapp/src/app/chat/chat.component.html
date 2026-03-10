@@ -1,7 +1,13 @@
-<li class="message" *ngFor="let message of messages">
-  <app-message
-    [text]="message.text"
-    [sender]="message.sender"
-    [isOwnMessage]="message.isOwnMessage"
-  ></app-message>
-</li>
+<div *ngFor="let group of groupedMessages" class="day-group">
+  <div class="date-header">{{ group.date }}</div>
+  <ul class="messages-list">
+    <li class="message" *ngFor="let message of group.messages">
+      <app-message
+        [content]="message.content"
+        [sender]="message.sender"
+        [isOwnMessage]="message.isOwnMessage"
+        [createdAt]="message.createdAt"
+      ></app-message>
+    </li>
+  </ul>
+</div>
