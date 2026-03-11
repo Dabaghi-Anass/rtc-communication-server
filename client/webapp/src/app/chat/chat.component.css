@@ -36,7 +36,7 @@
 .first-message {
   padding: 0;
 }
-.first-message app-message .message-info {
+.first-message:not(.last-message) app-message .message-info {
   display: none;
 }
 .first-message {
@@ -82,5 +82,5 @@
 }
 
 .single-emoji > app-message .message-info {
-  display: none;
+  margin-block: 20px;
 }

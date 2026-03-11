@@ -1,4 +1,10 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ViewEncapsulation,
+  ViewChildren,
+  QueryList,
+  AfterViewInit,
+} from '@angular/core';
 import { MessageComponent } from '../components/message/message.component';
 import { CommonModule } from '@angular/common';
 
@@ -10,7 +16,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './chat.component.css',
   encapsulation: ViewEncapsulation.None,
 })
-export class ChatComponent {
+export class ChatComponent implements AfterViewInit {
+  @ViewChildren('messageBox') messageBoxes!: QueryList<any>;
+  messageGroupWidths: { [key: string]: number } = {};
   messages = [
     {
       content: 'Hello, how are you?',
@@ -235,5 +243,50 @@ export class ChatComponent {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.calculateGroupWidths(), 0);
+  }
+
+  calculateGroupWidths(): void {
+    this.messageGroupWidths = {};
+    const dates = this.dates;
+    let messageIndex = 0;
+
+    dates.forEach((date) => {
+      const senderGroups = this.senderGroupsFor(date);
+      senderGroups.forEach((group) => {
+        const groupKey = `${date}-${group.sender}`;
+        let maxWidth = 0;
+
+        group.messages.forEach(() => {
+          const element = document.querySelector(
+            `[data-message-index="${messageIndex}"]`,
+          ) as HTMLElement;
+          if (element) {
+            const width = element.offsetWidth;
+            maxWidth = Math.max(maxWidth, width);
+          }
+          messageIndex++;
+        });
+
+        this.messageGroupWidths[groupKey] = maxWidth;
+        messageIndex -= group.messages.length;
+        group.messages.forEach((_, i) => {
+          const element = document.querySelector(
+            `[data-message-index="${messageIndex + i}"]`,
+          ) as HTMLElement;
+          if (element) {
+            element.style.width = maxWidth + 'px';
+          }
+        });
+        messageIndex += group.messages.length;
+      });
+    });
+  }
+
+  getGroupKey(date: string, sender: string): string {
+    return `${date}-${sender}`;
   }
 }
