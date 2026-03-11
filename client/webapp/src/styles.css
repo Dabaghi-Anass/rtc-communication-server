@@ -45,3 +45,19 @@
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 300ms ease-in-out;
 }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

@@ -6,6 +6,10 @@
   width: fit-content;
 }
 
+.message.single-emoji {
+  background: none !important;
+}
+
 .message.own {
   background-color: var(--yellow);
   border-bottom-left-radius: var(--radius-xl);
@@ -18,7 +22,7 @@
   margin-top: 0.25rem;
 }
 
-:has(.message.own) {
+:has(> .message.own) {
   text-align: right;
   margin-left: auto;
   width: fit-content;

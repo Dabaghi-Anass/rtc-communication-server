@@ -1,8 +1,12 @@
 <div>
-  <div class="message" [class.own]="isOwnMessage">
+  <div
+    class="message"
+    [class.own]="isOwnMessage"
+    [class.single-emoji]="singleEmoji"
+  >
     <p>{{ content }}</p>
   </div>
-  <div>
+  <div class="message-info">
     <p class="timestamp">{{ formatDate(createdAt) }}</p>
   </div>
 </div>

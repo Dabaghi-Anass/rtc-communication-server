@@ -1,15 +1,34 @@
 <div class="chat-container">
-  <div *ngFor="let group of groupedMessages" class="day-group">
-    <div class="date-header">{{ group.date }}</div>
-    <ul class="messages-list">
-      <li class="message" *ngFor="let message of group.messages">
-        <app-message
-          [content]="message.content"
-          [sender]="message.sender"
-          [isOwnMessage]="message.isOwnMessage"
-          [createdAt]="message.createdAt"
-        ></app-message>
-      </li>
-    </ul>
+  <div *ngFor="let date of dates" class="day-group">
+    <div>
+      <span class="date-header">{{ formatDate(date) }}</span>
+    </div>
+    <div *ngFor="let senderGroup of senderGroupsFor(date)" class="sender-group">
+      <ul class="messages-list">
+        <li
+          class="message-box"
+          *ngFor="
+            let message of senderGroup.messages;
+            let i = index;
+            let isFirst = first;
+            let isLast = last
+          "
+          [ngClass]="{
+            'first-message': isFirst,
+            'middle-message': !isFirst && !isLast,
+            'last-message': isLast,
+            'single-emoji': isSingleEmoji(message.content),
+          }"
+        >
+          <app-message
+            [content]="message.content"
+            [sender]="message.sender"
+            [isOwnMessage]="message.isOwnMessage"
+            [createdAt]="message.createdAt"
+            [singleEmoji]="isSingleEmoji(message.content)"
+          ></app-message>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>

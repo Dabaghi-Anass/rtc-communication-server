@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-message',
   standalone: true,
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class MessageComponent {
   @Input() content!: string;
@@ -14,6 +15,8 @@ export class MessageComponent {
   @Input() type: string = 'text';
   @Input() pollId?: string;
   @Input() createdAt?: string;
+  // flag to indicate message is just a single emoji (used for styling)
+  @Input() singleEmoji = false;
 
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';

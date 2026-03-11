@@ -2,6 +2,8 @@
   background-image: url(../../assets/images/chat_bg_pattern.svg);
   background-size: 50%;
   background-repeat: repeat;
+  padding: 20px;
+  width: 100%;
 }
 
 .day-group {
@@ -10,19 +12,75 @@
 
 .date-header {
   text-align: center;
-  font-weight: bold;
-  color: #666;
-  margin: 10px 0;
-  padding: 5px 0;
+  color: #aaa;
+  margin: 30px auto;
+  width: fit-content;
+  padding: 5px 10px;
   border-bottom: 1px solid #eee;
+  font-size: var(--font-size-sm);
 }
-
+:has(> .date-header) {
+  display: flex;
+  align-items: center;
+}
 .messages-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.message {
+:has(> .message-box:has(.first-message)) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.first-message {
+  padding: 0;
+}
+.first-message app-message .message-info {
+  display: none;
+}
+.first-message {
+  margin-bottom: 0;
+}
+.middle-message app-message .message {
+  border-radius: 0 !important;
+}
+.middle-message app-message .message-info {
+  margin: 0 !important;
+  display: none;
+}
+.message-box {
+  width: 100%;
+}
+.message-box.first-message.last-message {
   margin-bottom: 10px;
+}
+.first-message:not(.last-message) app-message .message {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.last-message:not(.first-message) app-message .message {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.single-emoji {
+  background: none !important;
+}
+.single-emoji > app-message {
+  background: none !important;
+  font-size: 4rem;
+}
+:has(> .single-emoji) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.single-emoji app-message * {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.single-emoji > app-message .message-info {
+  display: none;
 }
