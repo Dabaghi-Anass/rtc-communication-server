@@ -23,10 +23,16 @@
   display: flex;
   align-items: center;
 }
+.sender-group {
+  display: flex;
+}
+.sender-group:has(.message.own) {
+  flex-direction: row-reverse;
+}
 .messages-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  width: fit-content;
 }
 
 :has(> .message-box:has(.first-message)) {
@@ -45,6 +51,7 @@
 .middle-message app-message .message {
   border-radius: 0 !important;
 }
+
 .middle-message app-message .message-info {
   margin: 0 !important;
   display: none;
@@ -54,6 +61,10 @@
 }
 .message-box.first-message.last-message {
   margin-bottom: 10px;
+}
+
+.message-box app-message .message {
+  width: 100%;
 }
 .first-message:not(.last-message) app-message .message {
   border-bottom-left-radius: 0 !important;
