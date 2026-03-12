@@ -19,11 +19,17 @@
 .timestamp {
   font-size: 0.75rem;
   color: var(--gray-dark);
-  margin-top: 0.25rem;
 }
 
 :has(> .message.own) {
   text-align: right;
   margin-left: auto;
   width: fit-content;
+}
+
+.message-info {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.2rem;
 }

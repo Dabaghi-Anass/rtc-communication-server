@@ -7,11 +7,12 @@ import {
 } from '@angular/core';
 import { MessageComponent } from '../components/message/message.component';
 import { CommonModule } from '@angular/common';
+import { PollMessageComponent } from '../components/poll-message/poll-message.component';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, MessageComponent],
+  imports: [CommonModule, MessageComponent, PollMessageComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
   encapsulation: ViewEncapsulation.None,
@@ -33,6 +34,7 @@ export class ChatComponent implements AfterViewInit {
       content: 'I am Alice btw',
       sender: 'Alice',
       isOwnMessage: false,
+      isSeen: true,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
@@ -40,6 +42,7 @@ export class ChatComponent implements AfterViewInit {
       content: 'Alice Green',
       sender: 'Alice',
       isOwnMessage: false,
+      isSeen: true,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
@@ -47,11 +50,14 @@ export class ChatComponent implements AfterViewInit {
       content: '😅',
       sender: 'Alice',
       isOwnMessage: false,
+      isSeen: true,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
       type: 'text',
-      content: 'I am good, thanks! How about you?',
+      content:
+        'I am good, thanks! How about you? I am good, thanks! How about you I am good, thanks! How about you I am good, thanks! How about you I am good, thanks! How about you',
+      isSeen: true,
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 15).toISOString(),
@@ -59,6 +65,7 @@ export class ChatComponent implements AfterViewInit {
     {
       type: 'text',
       content: 'I am good, thanks! How about you?',
+      isSeen: true,
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 15).toISOString(),
@@ -66,6 +73,7 @@ export class ChatComponent implements AfterViewInit {
     {
       type: 'text',
       content: '😍',
+      isSeen: true,
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),

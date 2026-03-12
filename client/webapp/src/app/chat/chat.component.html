@@ -23,6 +23,7 @@
               shouldApplyLastMessage(senderGroup.messages, i) &&
               message.type === 'text',
             'single-emoji': isSingleEmoji(message.content),
+            'poll-message': message.type === 'poll',
             decorated: message.isDecorated,
           }"
           [attr.data-message-id]="getMessageId(message, i, date)"
@@ -30,16 +31,19 @@
             message.isDecorated && toggleOverlay(getMessageId(message, i, date))
           "
         >
-          <div *ngIf="message.type === 'text'">
-            <app-message
-              [content]="message.content"
-              [sender]="message.sender"
-              [isOwnMessage]="message.isOwnMessage"
-              [createdAt]="message.createdAt"
-              [singleEmoji]="isSingleEmoji(message.content)"
-            ></app-message>
-          </div>
-          <div *ngIf="message.type === 'poll'">anass dabaghi</div>
+          <app-message
+            *ngIf="message.type === 'text'"
+            [content]="message.content"
+            [sender]="message.sender"
+            [isOwnMessage]="message.isOwnMessage"
+            [createdAt]="message.createdAt"
+            [singleEmoji]="isSingleEmoji(message.content)"
+          ></app-message>
+          <app-poll-message
+            *ngIf="message.type === 'poll'"
+            class="poll-container"
+          >
+          </app-poll-message>
         </li>
       </ul>
     </div>

@@ -15,6 +15,7 @@ export class MessageComponent {
   @Input() type: string = 'text';
   @Input() pollId?: string;
   @Input() createdAt?: string;
+  @Input() isSeen = false;
   // flag to indicate message is just a single emoji (used for styling)
   @Input() singleEmoji = false;
 

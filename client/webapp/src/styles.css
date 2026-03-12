@@ -8,7 +8,7 @@
   --blue: hsl(var(--blue-hue), 94%, 88%);
   --gray: hsl(0, 0%, 92%);
   --gray-dark: hsl(0, 0%, 32%);
-  --background-color: #000c18;
+  --background-color: #ffffff;
   --text-color: #212529;
 
   /* Spacing */
