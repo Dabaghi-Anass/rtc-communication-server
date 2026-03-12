@@ -14,19 +14,32 @@
             let isLast = last
           "
           [ngClass]="{
-            'first-message': isFirst,
-            'middle-message': !isFirst && !isLast,
-            'last-message': isLast,
+            'first-message': isFirst && message.type === 'text',
+            'middle-message':
+              !isFirst &&
+              !shouldApplyLastMessage(senderGroup.messages, i) &&
+              message.type === 'text',
+            'last-message':
+              shouldApplyLastMessage(senderGroup.messages, i) &&
+              message.type === 'text',
             'single-emoji': isSingleEmoji(message.content),
+            decorated: message.isDecorated,
           }"
+          [attr.data-message-id]="getMessageId(message, i, date)"
+          (click)="
+            message.isDecorated && toggleOverlay(getMessageId(message, i, date))
+          "
         >
-          <app-message
-            [content]="message.content"
-            [sender]="message.sender"
-            [isOwnMessage]="message.isOwnMessage"
-            [createdAt]="message.createdAt"
-            [singleEmoji]="isSingleEmoji(message.content)"
-          ></app-message>
+          <div *ngIf="message.type === 'text'">
+            <app-message
+              [content]="message.content"
+              [sender]="message.sender"
+              [isOwnMessage]="message.isOwnMessage"
+              [createdAt]="message.createdAt"
+              [singleEmoji]="isSingleEmoji(message.content)"
+            ></app-message>
+          </div>
+          <div *ngIf="message.type === 'poll'">anass dabaghi</div>
         </li>
       </ul>
     </div>

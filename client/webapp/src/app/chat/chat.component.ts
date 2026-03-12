@@ -19,156 +19,134 @@ import { CommonModule } from '@angular/common';
 export class ChatComponent implements AfterViewInit {
   @ViewChildren('messageBox') messageBoxes!: QueryList<any>;
   messageGroupWidths: { [key: string]: number } = {};
+  revealedMessages = new Set<string>();
   messages = [
     {
+      type: 'text',
       content: 'Hello, how are you?',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
+      type: 'text',
       content: 'I am Alice btw',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
+      type: 'text',
       content: 'Alice Green',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
+      type: 'text',
       content: '😅',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
+      type: 'text',
       content: 'I am good, thanks! How about you?',
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 15).toISOString(),
     },
     {
+      type: 'text',
       content: 'I am good, thanks! How about you?',
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 15).toISOString(),
     },
     {
-      content: 'I am good, thanks! How about you?',
-      sender: 'Bob',
-      isOwnMessage: true,
-      createdAt: new Date(2024, 0, 1, 9, 15).toISOString(),
-    },
-    {
-      content: 'I am doing well too!',
+      type: 'text',
+      content: '😍',
       sender: 'Alice',
       isOwnMessage: false,
-      createdAt: new Date(2024, 0, 1, 9, 30).toISOString(),
+      createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
     },
     {
-      content: 'Great! See you later.',
-      sender: 'Bob',
-      isOwnMessage: true,
-      createdAt: new Date(2024, 0, 1, 10, 0).toISOString(),
-    },
-    {
-      content: 'Bye!',
-      sender: 'Alice',
-      isOwnMessage: false,
-      createdAt: new Date(2024, 0, 1, 10, 15).toISOString(),
-    },
-    {
-      content: 'Hi again!',
-      sender: 'Bob',
-      isOwnMessage: true,
-      createdAt: new Date(2024, 0, 2, 8, 0).toISOString(),
-    },
-    {
-      content: "Hey! What's up?",
-      sender: 'Alice',
-      isOwnMessage: false,
-      createdAt: new Date(2024, 0, 2, 8, 20).toISOString(),
-    },
-    {
-      content: 'Nothing much, just working.',
-      sender: 'Bob',
-      isOwnMessage: true,
-      createdAt: new Date(2024, 0, 2, 8, 40).toISOString(),
-    },
-    {
-      content: 'Same here!',
-      sender: 'Alice',
-      isOwnMessage: false,
-      createdAt: new Date(2024, 0, 2, 9, 0).toISOString(),
-    },
-    {
-      content: 'Talk later?',
-      sender: 'Bob',
-      isOwnMessage: true,
-      createdAt: new Date(2024, 0, 2, 9, 30).toISOString(),
-    },
-    {
-      content: 'Sure!',
-      sender: 'Alice',
-      isOwnMessage: false,
-      createdAt: new Date(2024, 0, 3, 10, 0).toISOString(),
-    },
-    {
+      type: 'text',
       content: "How's your day?",
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 3, 10, 15).toISOString(),
     },
     {
+      type: 'text',
       content: 'Pretty good!',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 3, 10, 35).toISOString(),
     },
     {
+      type: 'text',
       content: 'Glad to hear that.',
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 3, 11, 0).toISOString(),
     },
     {
+      type: 'text',
       content: 'Thanks!',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 3, 11, 20).toISOString(),
     },
     {
+      type: 'text',
       content: 'Long time no talk!',
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 4, 14, 0).toISOString(),
     },
     {
+      type: 'text',
       content: 'Indeed! How have you been?',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 4, 14, 25).toISOString(),
     },
     {
+      type: 'text',
       content: 'Busy with projects.',
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 4, 14, 45).toISOString(),
     },
     {
+      type: 'text',
       content: 'I understand.',
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 4, 15, 10).toISOString(),
     },
     {
+      type: 'text',
       content: "Let's catch up soon!",
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 4, 15, 30).toISOString(),
+    },
+    {
+      type: 'poll',
+      title: 'user abc raised a poll to timout user xyz for 8 4 hours',
+      reason: 'raison',
+      description: 'user xyz did efg',
+      options: [
+        { label: 'yes', votes: 1, selected: true },
+        { label: 'no', votes: 0, selected: false },
+      ],
+      consequence:
+        'user xyz will be banned for 8 hours if more than 50% of chat accepted',
+      sender: 'Alice',
+      isOwnMessage: false,
+      createdAt: new Date(2024, 0, 4, 16, 0).toISOString(),
     },
   ];
 
@@ -288,5 +266,47 @@ export class ChatComponent implements AfterViewInit {
 
   getGroupKey(date: string, sender: string): string {
     return `${date}-${sender}`;
+  }
+
+  getMessageId(message: any, index: number, date: string): string {
+    return `${date}-${message.sender}-${message.createdAt}-${index}`;
+  }
+
+  toggleOverlay(messageId: string): void {
+    if (this.revealedMessages.has(messageId)) {
+      this.revealedMessages.delete(messageId);
+    } else {
+      this.revealedMessages.add(messageId);
+    }
+  }
+
+  isMessageRevealed(messageId: string): boolean {
+    return this.revealedMessages.has(messageId);
+  }
+
+  shouldApplyLastMessage(messages: any[], index: number): boolean {
+    const isLast = index === messages.length - 1;
+    const isSingleEmoji = this.isSingleEmoji(messages[index].content);
+
+    // Don't apply 'last-message' to a single emoji that is the last message
+    if (isLast && isSingleEmoji) {
+      return false;
+    }
+
+    // Apply 'last-message' to the actual last message if it's not a single emoji
+    if (isLast && !isSingleEmoji) {
+      return true;
+    }
+
+    // Check if the next message is last and is a single emoji
+    // If so, apply 'last-message' to the current message
+    if (index === messages.length - 2) {
+      const nextMessage = messages[index + 1];
+      if (this.isSingleEmoji(nextMessage.content)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
