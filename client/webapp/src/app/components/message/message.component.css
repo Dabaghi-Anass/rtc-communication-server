@@ -6,7 +6,7 @@
   width: fit-content;
   font-weight: 500;
   color: var(--text-color);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-normal);
 }
 
 .message.single-emoji {
@@ -39,6 +39,7 @@
 .message:has(.timestamp) {
   display: none;
 }
+
 :has(> .message.own) {
   text-align: right;
   margin-left: auto;
@@ -50,4 +51,12 @@
   justify-content: flex-end;
   align-items: center;
   gap: 0.2rem;
+}
+.status-emoji {
+  font-size: 14px;
+  margin-left: 6px;
+}
+.status-icon {
+  width: 14px;
+  height: 14px;
 }

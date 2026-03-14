@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MessageTransmissionStatus } from '../../../types/message';
 
 @Component({
   selector: 'app-poll-message',
@@ -18,6 +19,26 @@ export class PollMessageComponent {
   @Input() sender!: string;
   @Input() isOwnMessage = false;
   @Input() isSeen = false;
+  @Input() status: MessageTransmissionStatus = MessageTransmissionStatus.SENT;
+
+  getStatusEmoji(): string {
+    switch (this.status) {
+      case MessageTransmissionStatus.TAKE_OFF:
+        return '🚀';
+
+      case MessageTransmissionStatus.SENT:
+        return '📨';
+
+      case MessageTransmissionStatus.DELIVERED:
+        return '📬';
+
+      case MessageTransmissionStatus.SEEN:
+        return '👀';
+
+      default:
+        return '';
+    }
+  }
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';
     const date = new Date(dateString);

@@ -8,6 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MessageComponent } from '../components/message/message.component';
 import { PollMessageComponent } from '../components/poll-message/poll-message.component';
+import { MessageTransmissionStatus } from '../../types/message';
 
 @Component({
   selector: 'app-chat',
@@ -30,6 +31,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
+      status: MessageTransmissionStatus.TAKE_OFF,
     },
     {
       type: 'text',
@@ -37,6 +39,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 1).toISOString(),
+      status: MessageTransmissionStatus.TAKE_OFF,
     },
     {
       type: 'text',
@@ -44,6 +47,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 2).toISOString(),
+      status: MessageTransmissionStatus.TAKE_OFF,
     },
     {
       type: 'text',
@@ -51,6 +55,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 2).toISOString(),
+      status: MessageTransmissionStatus.SEEN,
     },
     {
       type: 'text',
@@ -58,6 +63,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 5).toISOString(),
+      status: MessageTransmissionStatus.SEEN,
     },
     {
       type: 'text',
@@ -65,6 +71,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 6).toISOString(),
+      status: MessageTransmissionStatus.SENT,
     },
 
     {
@@ -73,6 +80,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 8).toISOString(),
+      status: MessageTransmissionStatus.DELIVERED,
     },
 
     // DAY 2
@@ -82,6 +90,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 2, 10, 0).toISOString(),
+      status: MessageTransmissionStatus.SEEN,
     },
 
     {
@@ -90,6 +99,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Bob',
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 2, 10, 3).toISOString(),
+      status: MessageTransmissionStatus.SEEN,
     },
 
     {
@@ -98,6 +108,7 @@ export class ChatComponent implements AfterViewInit {
       sender: 'Alice',
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 2, 10, 5).toISOString(),
+      status: MessageTransmissionStatus.TAKE_OFF,
     },
 
     // DAY 3 POLLS
@@ -105,6 +116,7 @@ export class ChatComponent implements AfterViewInit {
       type: 'poll',
       content: 'Vote to timeout user xyz',
       reason: 'Spam',
+      status: MessageTransmissionStatus.DELIVERED,
       description: 'User xyz posted spam links',
       options: [
         { label: 'yes', votes: 1, selected: true },
@@ -119,6 +131,7 @@ export class ChatComponent implements AfterViewInit {
       type: 'poll',
       content: 'Kick inactive user?',
       reason: 'Inactive',
+      status: MessageTransmissionStatus.SENT,
       description: 'User hasn’t talked in 3 months',
       options: [
         { label: 'yes', votes: 3, selected: false },

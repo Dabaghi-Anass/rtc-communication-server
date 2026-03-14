@@ -38,6 +38,7 @@
             [isOwnMessage]="message.isOwnMessage"
             [createdAt]="message.createdAt"
             [singleEmoji]="isSingleEmoji(message.content)"
+            [status]="message.status"
           />
 
           <app-poll-message
@@ -50,6 +51,7 @@
             [sender]="message.sender"
             [isOwnMessage]="message.isOwnMessage"
             [createdAt]="message.createdAt"
+            [status]="message.status"
             class="poll-container"
           />
         </li>

@@ -3,8 +3,8 @@
   border-radius: 12px;
 
   padding: 1rem 1.25rem;
-  width: 420px;
-
+  width: min(700px, 100%);
+  min-width: 300px;
   font-family: Arial, Helvetica, sans-serif;
   color: #222;
 
@@ -82,4 +82,8 @@
 .message-container.own {
   display: flex;
   justify-content: flex-end;
+}
+.status-icon {
+  width: 16px;
+  height: 16px;
 }

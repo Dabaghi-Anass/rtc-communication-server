@@ -73,6 +73,10 @@
   margin: 0 !important;
   display: none;
 }
+.single-emoji app-message .message-info {
+  margin: 0 !important;
+  display: flex;
+}
 
 .message-box.first-message.last-message {
   margin-bottom: 10px;
@@ -115,9 +119,4 @@
 .message-box {
   position: relative;
   width: 100%;
-}
-
-.message-overlay::before {
-  content: "Click to reveal";
-  position: absolute;
 }
