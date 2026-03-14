@@ -38,12 +38,20 @@
             [isOwnMessage]="message.isOwnMessage"
             [createdAt]="message.createdAt"
             [singleEmoji]="isSingleEmoji(message.content)"
-          ></app-message>
+          />
+
           <app-poll-message
             *ngIf="message.type === 'poll'"
+            [content]="message.content"
+            [reason]="message.reason"
+            [description]="message.description"
+            [options]="message.options"
+            [consequence]="message.consequence"
+            [sender]="message.sender"
+            [isOwnMessage]="message.isOwnMessage"
+            [createdAt]="message.createdAt"
             class="poll-container"
-          >
-          </app-poll-message>
+          />
         </li>
       </ul>
     </div>

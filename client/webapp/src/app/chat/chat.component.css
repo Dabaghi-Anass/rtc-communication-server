@@ -12,13 +12,14 @@
 
 .date-header {
   text-align: center;
-  color: #aaa;
+  color: #777777;
   margin: 30px auto;
   width: fit-content;
   padding: 5px 10px;
   border-bottom: 1px solid #eee;
   font-size: var(--font-size-sm);
 }
+
 :has(> .date-header) {
   display: flex;
   align-items: center;
@@ -26,19 +27,19 @@
 .sender-group {
   display: flex;
 }
-.sender-group:has(.message.own) {
+
+.sender-group:has(.own) {
+  /*own message*/
   flex-direction: row-reverse;
 }
 
-* {
-  box-sizing: border-box;
-}
 .messages-list {
   list-style: none;
   padding: 0;
   width: fit-content;
   max-width: 60ch;
 }
+
 .seen-icon {
   width: 15px;
 }
@@ -64,20 +65,15 @@
   border-bottom: 1px solid var(--background-color);
 }
 
+.single-emoji app-message .message {
+  border-bottom: none;
+}
+
 .middle-message app-message .message-info {
   margin: 0 !important;
   display: none;
 }
 
-.message-box:has(.poll-container) {
-  width: auto;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.sender-group:has(.poll-container) .message-box:has(.poll-container) {
-  justify-content: flex-start;
-}
 .message-box.first-message.last-message {
   margin-bottom: 10px;
 }
@@ -98,10 +94,11 @@
 
 .single-emoji {
   background: none !important;
+  font-size: 4rem !important;
 }
 .single-emoji > app-message {
   background: none !important;
-  font-size: 4rem;
+  font-size: 4rem !important;
 }
 :has(> .single-emoji) {
   padding: 0 !important;
@@ -123,98 +120,4 @@
 .message-overlay::before {
   content: "Click to reveal";
   position: absolute;
-}
-
-.message-overlay.revealed {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.poll-container {
-  background: #ffc0e0;
-  border-radius: 12px;
-  padding: 20px;
-  width: auto;
-  min-width: 400px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-}
-
-.poll-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #ff1493;
-  margin-bottom: 12px;
-}
-
-.poll-reason {
-  font-size: 14px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 8px;
-}
-
-.poll-description {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 16px;
-}
-
-.poll-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.poll-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.poll-option.selected {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.option-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-}
-
-.poll-option.selected .option-checkbox {
-  background: #ff69b4;
-  border-color: #ff1493;
-}
-
-.poll-option.selected .option-checkbox input {
-  accent-color: #ff1493;
-}
-
-.option-checkbox input {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-}
-
-.option-label {
-  font-size: 14px;
-  color: #000;
-  font-weight: 500;
-}
-
-.poll-consequence {
-  font-size: 12px;
-  color: #333;
-  line-height: 1.4;
 }

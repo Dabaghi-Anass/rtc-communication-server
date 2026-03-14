@@ -1,4 +1,8 @@
-<div>
+<div
+  class="message-container"
+  [class.own]="isOwnMessage"
+  [class.single-emoji]="singleEmoji"
+>
   <div
     class="message"
     [class.own]="isOwnMessage"
