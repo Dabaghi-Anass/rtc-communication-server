@@ -22,11 +22,7 @@ export class MessageComponent {
   @Input() createdAt?: string;
   @Input() singleEmoji = false;
   // flag to indicate message is just a single emoji (used for styling)
-  statusString: string = '';
-
-  constructor() {
-    this.statusString = this.status.toString();
-  }
+  MessageTransmissionStatus = MessageTransmissionStatus;
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';
     const date = new Date(dateString);

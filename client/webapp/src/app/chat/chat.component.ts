@@ -116,7 +116,7 @@ export class ChatComponent implements AfterViewInit {
       type: 'poll',
       content: 'Vote to timeout user xyz',
       reason: 'Spam',
-      status: MessageTransmissionStatus.DELIVERED,
+      status: MessageTransmissionStatus.SEEN,
       description: 'User xyz posted spam links',
       options: [
         { label: 'yes', votes: 1, selected: true },

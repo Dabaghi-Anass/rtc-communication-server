@@ -21,24 +21,7 @@ export class PollMessageComponent {
   @Input() isSeen = false;
   @Input() status: MessageTransmissionStatus = MessageTransmissionStatus.SENT;
 
-  getStatusEmoji(): string {
-    switch (this.status) {
-      case MessageTransmissionStatus.TAKE_OFF:
-        return '🚀';
-
-      case MessageTransmissionStatus.SENT:
-        return '📨';
-
-      case MessageTransmissionStatus.DELIVERED:
-        return '📬';
-
-      case MessageTransmissionStatus.SEEN:
-        return '👀';
-
-      default:
-        return '';
-    }
-  }
+  MessageTransmissionStatus = MessageTransmissionStatus;
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';
     const date = new Date(dateString);

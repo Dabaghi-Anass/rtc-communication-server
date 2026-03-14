@@ -15,7 +15,7 @@
       {{ formatDate(createdAt) }}
     </p>
     <svg
-      *ngIf="statusString === 'take_off'"
+      *ngIf="status === MessageTransmissionStatus.TAKE_OFF"
       class="status-icon"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 640 640"
@@ -25,7 +25,7 @@
       />
     </svg>
     <svg
-      *ngIf="statusString === 'sent'"
+      *ngIf="status === MessageTransmissionStatus.SENT"
       class="status-icon"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 640 640"
@@ -35,7 +35,7 @@
       />
     </svg>
     <svg
-      *ngIf="statusString === 'delivered'"
+      *ngIf="status === MessageTransmissionStatus.DELIVERED"
       class="status-icon"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 640 640"
@@ -45,9 +45,9 @@
       />
     </svg>
     <svg
-      *ngIf="statusString === 'seen'"
+      *ngIf="status === MessageTransmissionStatus.SEEN"
       class="status-icon"
-      style="fill: red"
+      style="fill: rgb(0, 132, 255)"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 640 640"
     >
