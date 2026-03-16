@@ -3,12 +3,62 @@
   [class.own]="isOwnMessage"
   [class.single-emoji]="singleEmoji"
 >
-  <div
-    class="message"
-    [class.own]="isOwnMessage"
-    [class.single-emoji]="singleEmoji"
-  >
-    <p>{{ content }}</p>
+  <div class="message-wrapper" style="display: flex; width: 100%">
+    <div
+      class="message"
+      [class.own]="isOwnMessage"
+      [class.single-emoji]="singleEmoji"
+    >
+      <p>{{ content }}</p>
+      <div *ngIf="groupedReactions.length > 0" class="reactions-container">
+        <span
+          class="message-attached-reaction"
+          *ngFor="let reaction of groupedReactions"
+        >
+          {{ reaction.emoji
+          }}<span *ngIf="reaction.count > 1">{{ reaction.count }}</span>
+        </span>
+      </div>
+    </div>
+    <div class="message-content">
+      <button class="btn no-bg-btn rounded">
+        <svg
+          fill="#333"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 640 640"
+        >
+          <path
+            d="M268.2 82.4C280.2 87.4 288 99 288 112L288 192L400 192C497.2 192 576 270.8 576 368C576 481.3 494.5 531.9 475.8 542.1C473.3 543.5 470.5 544 467.7 544C456.8 544 448 535.1 448 524.3C448 516.8 452.3 509.9 457.8 504.8C467.2 496 480 478.4 480 448.1C480 395.1 437 352.1 384 352.1L288 352.1L288 432.1C288 445 280.2 456.7 268.2 461.7C256.2 466.7 242.5 463.9 233.3 454.8L73.3 294.8C60.8 282.3 60.8 262 73.3 249.5L233.3 89.5C242.5 80.3 256.2 77.6 268.2 82.6z"
+          />
+        </svg>
+      </button>
+      <div class="reaction-wrapper">
+        <button
+          class="reaction-btn btn no-bg-btn rounded"
+          (click)="toggleReactions()"
+        >
+          <svg
+            fill="#333"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 640 640"
+          >
+            <path
+              d="M528 320C528 205.1 434.9 112 320 112C205.1 112 112 205.1 112 320C112 434.9 205.1 528 320 528C434.9 528 528 434.9 528 320zM64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320zM241.3 383.4C256.3 399 282.4 416 320 416C357.6 416 383.7 399 398.7 383.4C407.9 373.8 423.1 373.5 432.6 382.7C442.1 391.9 442.5 407.1 433.3 416.6C411.2 439.6 373.3 464 320 464C266.7 464 228.8 439.6 206.7 416.6C197.5 407 197.8 391.8 207.4 382.7C217 373.6 232.2 373.8 241.3 383.4zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z"
+            />
+          </svg>
+        </button>
+        <div class="reaction-popup" *ngIf="showReactions">
+          <button
+            *ngFor="let r of reactionsMap"
+            class="reaction-option"
+            [title]="r.label"
+            (click)="addReaction(r)"
+          >
+            {{ r.emoji }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="message-info">
     <p class="timestamp">

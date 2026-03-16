@@ -7,6 +7,8 @@
   font-weight: 500;
   color: var(--text-color);
   font-size: var(--font-size-normal);
+  position: relative;
+  isolation: isolate;
 }
 
 .message.single-emoji {
@@ -35,13 +37,15 @@
   flex-direction: column;
   align-items: flex-end;
 }
+.message-container.own > .message-wrapper {
+  flex-direction: row-reverse;
+}
 
 .message:has(.timestamp) {
   display: none;
 }
 
 :has(> .message.own) {
-  text-align: right;
   margin-left: auto;
   width: fit-content;
 }
@@ -60,3 +64,106 @@
   width: 14px;
   height: 14px;
 }
+
+.message-content {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 1rem;
+  opacity: 0;
+  transition: 250ms;
+}
+
+.btn {
+  background: var(--yellow);
+  width: 25px;
+  height: 25px;
+  padding: 0.1rem;
+  margin: 0;
+  border: none;
+  transition: 250ms;
+  position: relative;
+}
+.no-bg-btn {
+  background: none;
+}
+.no-bg-btn:is(:hover, :focus-within) {
+  background: var(--gray);
+}
+
+.rounded {
+  border-radius: 50%;
+}
+
+.reaction-wrapper {
+  position: relative;
+}
+
+.reaction-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgb(255, 252, 249);
+  border-radius: 30px;
+  padding: 0.7rem 1rem;
+  display: flex;
+  gap: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  z-index: 100;
+  animation: reactionPopIn 0.15s ease;
+}
+
+@keyframes reactionPopIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.9) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
+  }
+}
+
+.reaction-option {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  transition: transform 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.reaction-option:hover {
+  transform: scale(1.4) translateY(-4px);
+}
+
+.reactions-container {
+  background: rgb(255, 255, 255);
+  border: 1px solid #e6e6e6;
+  border-radius: 999px;
+  display: flex;
+  position: absolute;
+  right: 18px;
+  z-index: 10;
+  bottom: -14px;
+  padding: 1px 3px;
+}
+.message-attached-reaction {
+  font-size: 14px;
+  padding: 1px;
+}
+
+.own:has(.reactions-container) .reactions-container {
+  right: auto;
+  left: 18px;
+}
+
+/* .message:has(.reactions-container) {
+} */

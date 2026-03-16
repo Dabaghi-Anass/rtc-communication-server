@@ -60,7 +60,7 @@
 .first-message {
   margin-bottom: 0;
 }
-.middle-message app-message .message {
+.middle-message app-message .message:not(:has(.reactions-container)) {
   border-radius: 0 !important;
   border-bottom: 1px solid var(--background-color);
 }
@@ -85,7 +85,13 @@
 .message-box app-message .message {
   width: 100%;
 }
-.first-message:not(.last-message) app-message .message {
+.message-box:hover .message-content {
+  opacity: 1;
+  pointer-events: all;
+}
+.first-message:not(.last-message)
+  app-message
+  .message:not(:has(.reactions-container)) {
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
   border-bottom: 1px solid var(--background-color);
@@ -119,4 +125,8 @@
 .message-box {
   position: relative;
   width: 100%;
+}
+.middle-message app-message .message:has(.reactions-container) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

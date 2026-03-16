@@ -1,7 +1,7 @@
 <div class="chat-container">
   <div *ngFor="let date of dates" class="day-group">
     <div>
-      <span class="date-header">{{ formatDate(date) }}</span>
+      <span class="date-header">{{ date }}</span>
     </div>
     <div *ngFor="let senderGroup of senderGroupsFor(date)" class="sender-group">
       <ul class="messages-list">
@@ -14,14 +14,6 @@
             let isLast = last
           "
           [ngClass]="{
-            'first-message': isFirst && message.type === 'text',
-            'middle-message':
-              !isFirst &&
-              !shouldApplyLastMessage(senderGroup.messages, i) &&
-              message.type === 'text',
-            'last-message':
-              shouldApplyLastMessage(senderGroup.messages, i) &&
-              message.type === 'text',
             'single-emoji': isSingleEmoji(message.content),
             'poll-message': message.type === 'poll',
             decorated: message.isDecorated,
@@ -39,6 +31,7 @@
             [createdAt]="message.createdAt"
             [singleEmoji]="isSingleEmoji(message.content)"
             [status]="message.status"
+            [reactions]="message.reactions || []"
           />
 
           <app-poll-message

@@ -23,6 +23,8 @@ export class ChatComponent implements AfterViewInit {
   messageGroupWidths: { [key: string]: number } = {};
   revealedMessages = new Set<string>();
 
+  currentUser = 'Bob';
+
   messages = [
     // DAY 1
     {
@@ -32,6 +34,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 0).toISOString(),
       status: MessageTransmissionStatus.TAKE_OFF,
+      reactions: [{ emoji: '😁', user: 'Alice' }],
     },
     {
       type: 'text',
@@ -40,6 +43,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 1).toISOString(),
       status: MessageTransmissionStatus.TAKE_OFF,
+      reactions: [{ emoji: '❤️', user: 'Alice' }],
     },
     {
       type: 'text',
@@ -48,6 +52,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 2).toISOString(),
       status: MessageTransmissionStatus.TAKE_OFF,
+      reactions: [{ emoji: '❤️', user: 'Charlie' }],
     },
     {
       type: 'text',
@@ -56,6 +61,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 2).toISOString(),
       status: MessageTransmissionStatus.SEEN,
+      reactions: [],
     },
     {
       type: 'text',
@@ -64,6 +70,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 5).toISOString(),
       status: MessageTransmissionStatus.SEEN,
+      reactions: [{ emoji: '🚨', user: 'Dave' }],
     },
     {
       type: 'text',
@@ -72,8 +79,8 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 1, 9, 6).toISOString(),
       status: MessageTransmissionStatus.SENT,
+      reactions: [],
     },
-
     {
       type: 'text',
       content: 'Nice to hear!',
@@ -81,6 +88,7 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 1, 9, 8).toISOString(),
       status: MessageTransmissionStatus.DELIVERED,
+      reactions: [],
     },
 
     // DAY 2
@@ -91,8 +99,8 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: false,
       createdAt: new Date(2024, 0, 2, 10, 0).toISOString(),
       status: MessageTransmissionStatus.SEEN,
+      reactions: [],
     },
-
     {
       type: 'text',
       content: 'Working on the chat UI',
@@ -100,15 +108,22 @@ export class ChatComponent implements AfterViewInit {
       isOwnMessage: true,
       createdAt: new Date(2024, 0, 2, 10, 3).toISOString(),
       status: MessageTransmissionStatus.SEEN,
+      reactions: [
+        { emoji: '😎', user: 'Alice' },
+        { emoji: '😎', user: 'Charlie' },
+        { emoji: '😎', user: 'Dave' },
+        { emoji: '😎', user: 'Eve' },
+        { emoji: '😎', user: 'Frank' },
+      ],
     },
-
     {
       type: 'text',
       content: 'Looks great so far!',
       sender: 'Alice',
       isOwnMessage: false,
-      createdAt: new Date(2024, 0, 2, 10, 5).toISOString(),
+      createdAt: new Date(2026, 2, 13, 10, 5).toISOString(),
       status: MessageTransmissionStatus.TAKE_OFF,
+      reactions: [],
     },
 
     // DAY 3 POLLS
@@ -125,14 +140,15 @@ export class ChatComponent implements AfterViewInit {
       consequence: 'user xyz will be banned for 8 hours if majority accepts',
       sender: 'Alice',
       isOwnMessage: false,
-      createdAt: new Date(2024, 0, 3, 16, 0).toISOString(),
+      createdAt: new Date(2026, 2, 14, 16, 5).toISOString(),
+      reactions: [],
     },
     {
       type: 'poll',
       content: 'Kick inactive user?',
       reason: 'Inactive',
       status: MessageTransmissionStatus.SENT,
-      description: 'User hasn’t talked in 3 months',
+      description: "User hasn't talked in 3 months",
       options: [
         { label: 'yes', votes: 3, selected: false },
         { label: 'no', votes: 1, selected: true },
@@ -140,7 +156,8 @@ export class ChatComponent implements AfterViewInit {
       consequence: 'User will be removed if vote passes',
       sender: 'Bob',
       isOwnMessage: true,
-      createdAt: new Date(2024, 0, 3, 16, 5).toISOString(),
+      createdAt: new Date(2026, 2, 16, 7, 5).toISOString(),
+      reactions: [],
     },
   ];
 
@@ -158,7 +175,22 @@ export class ChatComponent implements AfterViewInit {
     const dateGroups: { [key: string]: any[] } = {};
 
     for (const message of this.messages) {
-      const dateKey = new Date(message.createdAt).toDateString();
+      const messageSentDate = new Date(message.createdAt);
+      const today = new Date();
+      let dateKey = new Date(message.createdAt).toDateString();
+
+      const timeDiff = today.getTime() - messageSentDate.getTime();
+      const oneDay = 24 * 60 * 60 * 1000;
+      if (timeDiff < oneDay) {
+        dateKey = 'Today';
+      } else if (timeDiff < 2 * oneDay) {
+        dateKey = 'Yesterday';
+      } else if (timeDiff < 7 * oneDay) {
+        const dayName = messageSentDate.toLocaleDateString(undefined, {
+          weekday: 'long',
+        });
+        dateKey = `${dayName}`;
+      }
 
       if (!dateGroups[dateKey]) {
         dateGroups[dateKey] = [];
@@ -222,10 +254,8 @@ export class ChatComponent implements AfterViewInit {
   isSingleEmoji(content: string): boolean {
     try {
       const trimmed = content?.trim();
-
       const emojiRegex =
         /^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+$/u;
-
       return emojiRegex.test(trimmed) && trimmed.length > 0;
     } catch {
       return false;
@@ -234,15 +264,17 @@ export class ChatComponent implements AfterViewInit {
 
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';
-
-    const date = new Date(dateString);
-
-    return date.toLocaleTimeString([], {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString([], {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (e) {
+      return dateString;
+    }
   }
 
   ngAfterViewInit() {
@@ -251,7 +283,6 @@ export class ChatComponent implements AfterViewInit {
 
   calculateGroupWidths() {
     this.messageGroupWidths = {};
-
     let messageIndex = 0;
 
     for (const date of this.dates) {
@@ -259,7 +290,6 @@ export class ChatComponent implements AfterViewInit {
 
       for (const group of senderGroups) {
         const groupKey = `${date}-${group.sender}`;
-
         let maxWidth = 0;
 
         for (let i = 0; i < group.messages.length; i++) {
@@ -301,6 +331,9 @@ export class ChatComponent implements AfterViewInit {
     if (messages[index].type !== 'text') return false;
 
     const isSingleEmoji = this.isSingleEmoji(messages[index].content);
+    const hasReactions = (messages[index].reactions?.length ?? 0) > 0;
+
+    if (hasReactions) return false;
 
     if (isLast && isSingleEmoji) return false;
 
@@ -308,7 +341,6 @@ export class ChatComponent implements AfterViewInit {
 
     if (index === messages.length - 2) {
       const nextMessage = messages[index + 1];
-
       if (this.isSingleEmoji(nextMessage.content)) {
         return true;
       }
