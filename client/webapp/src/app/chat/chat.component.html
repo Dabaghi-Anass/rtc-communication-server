@@ -47,8 +47,54 @@
             [status]="message.status"
             class="poll-container"
           />
+
+          <div
+            *ngIf="message.type === 'audio'"
+            class="audio-message"
+            [ngClass]="{ 'own-audio': message.isOwnMessage }"
+          >
+            <audio
+              [src]="message.content"
+              controls
+              style="max-width: 200px"
+            ></audio>
+            <span class="audio-duration" *ngIf="message.duration">
+              Duration: {{ message.duration }}s
+            </span>
+          </div>
         </li>
       </ul>
     </div>
+  </div>
+</div>
+
+<div class="message-input-container">
+  <div class="input-wrapper">
+    <div class="recording-indicator" *ngIf="isRecording">
+      <span class="recording-dot"></span>
+      <span class="recording-text">Recording: {{ recordingTime }}s</span>
+    </div>
+    <input
+      type="text"
+      class="message-input"
+      [(ngModel)]="messageInput"
+      (keyup.enter)="sendMessage()"
+      placeholder="Type a message..."
+      [disabled]="isRecording"
+    />
+    <button
+      class="send-btn"
+      (click)="sendMessage()"
+      [disabled]="!messageInput.trim() || isRecording"
+    >
+      Send
+    </button>
+    <button
+      class="audio-btn"
+      (click)="toggleAudioRecording()"
+      [class.recording]="isRecording"
+    >
+      {{ isRecording ? "⏹️ Stop" : "🎤 Record" }}
+    </button>
   </div>
 </div>

@@ -3,9 +3,11 @@ import {
   ViewEncapsulation,
   ChangeDetectionStrategy,
   AfterViewInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MessageComponent } from '../components/message/message.component';
 import { PollMessageComponent } from '../components/poll-message/poll-message.component';
 import { MessageTransmissionStatus } from '../../types/message';
@@ -13,7 +15,7 @@ import { MessageTransmissionStatus } from '../../types/message';
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, MessageComponent, PollMessageComponent],
+  imports: [CommonModule, FormsModule, MessageComponent, PollMessageComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
   encapsulation: ViewEncapsulation.None,
@@ -24,6 +26,15 @@ export class ChatComponent implements AfterViewInit {
   revealedMessages = new Set<string>();
 
   currentUser = 'Bob';
+
+  // Message and Audio Input
+  messageInput = '';
+  isRecording = false;
+  recordingTime = 0;
+  recordingTimer: any = null;
+  mediaRecorder: MediaRecorder | null = null;
+  audioChunks: Blob[] = [];
+  sentMessages: { type: string; content: string; timestamp: Date }[] = [];
 
   messages = [
     // DAY 1
@@ -167,7 +178,7 @@ export class ChatComponent implements AfterViewInit {
   } = {};
   dates: string[] = [];
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
     this.buildMessageGroups();
   }
 
@@ -347,5 +358,100 @@ export class ChatComponent implements AfterViewInit {
     }
 
     return false;
+  }
+
+  sendMessage() {
+    if (this.messageInput.trim()) {
+      const newMessage = {
+        type: 'text',
+        content: this.messageInput,
+        sender: this.currentUser,
+        isOwnMessage: true,
+        createdAt: new Date().toISOString(),
+        status: MessageTransmissionStatus.SENT,
+        reactions: [],
+      };
+      this.messages.push(newMessage);
+      this.sentMessages.push({
+        type: 'text',
+        content: this.messageInput,
+        timestamp: new Date(),
+      });
+      console.log('Message sent:', newMessage);
+      this.messageInput = '';
+      this.buildMessageGroups();
+      this.cdr.markForCheck();
+    }
+  }
+
+  async toggleAudioRecording() {
+    if (this.isRecording) {
+      this.stopAudioRecording();
+    } else {
+      await this.startAudioRecording();
+    }
+  }
+
+  async startAudioRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.audioChunks = [];
+      this.recordingTime = 0;
+
+      this.mediaRecorder.onstart = () => {
+        this.isRecording = true;
+        // Start recording timer
+        this.recordingTimer = setInterval(() => {
+          this.recordingTime++;
+          this.cdr.markForCheck();
+        }, 1000);
+      };
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        this.audioChunks.push(event.data);
+      };
+
+      this.mediaRecorder.onstop = () => {
+        clearInterval(this.recordingTimer);
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audioMessage = {
+          type: 'audio',
+          content: audioUrl,
+          sender: this.currentUser,
+          isOwnMessage: true,
+          createdAt: new Date().toISOString(),
+          status: MessageTransmissionStatus.SENT,
+          reactions: [],
+          duration: this.recordingTime,
+        };
+        this.messages.push(audioMessage);
+        this.sentMessages.push({
+          type: 'audio',
+          content: audioUrl,
+          timestamp: new Date(),
+        });
+        console.log('Audio sent:', audioMessage);
+        this.audioChunks = [];
+        this.recordingTime = 0;
+        this.buildMessageGroups();
+        this.cdr.markForCheck();
+      };
+
+      this.mediaRecorder.start();
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+    }
+  }
+
+  stopAudioRecording() {
+    if (this.mediaRecorder && this.isRecording) {
+      this.mediaRecorder.stop();
+      this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      this.isRecording = false;
+      clearInterval(this.recordingTimer);
+      this.cdr.markForCheck();
+    }
   }
 }
