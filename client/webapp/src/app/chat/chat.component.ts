@@ -36,6 +36,12 @@ export class ChatComponent implements AfterViewInit {
   audioChunks: Blob[] = [];
   sentMessages: { type: string; content: string; timestamp: Date }[] = [];
 
+  // Audio visualization
+  audioContexts: { [key: string]: AudioContext } = {};
+  analysers: { [key: string]: AnalyserNode } = {};
+  animationFrames: { [key: string]: number } = {};
+  audioElements: { [key: string]: HTMLAudioElement } = {};
+
   messages = [
     // DAY 1
     {
@@ -394,64 +400,221 @@ export class ChatComponent implements AfterViewInit {
 
   async startAudioRecording() {
     try {
+      console.log('Starting audio recording...');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       this.mediaRecorder = new MediaRecorder(stream);
       this.audioChunks = [];
       this.recordingTime = 0;
 
-      this.mediaRecorder.onstart = () => {
-        this.isRecording = true;
-        // Start recording timer
-        this.recordingTimer = setInterval(() => {
-          this.recordingTime++;
-          this.cdr.markForCheck();
-        }, 1000);
-      };
+      // Set recording state immediately
+      this.isRecording = true;
+      this.cdr.markForCheck();
+      console.log('Recording started');
+
+      // Start recording timer
+      this.recordingTimer = setInterval(() => {
+        this.recordingTime++;
+        this.cdr.markForCheck();
+      }, 1000);
 
       this.mediaRecorder.ondataavailable = (event) => {
-        this.audioChunks.push(event.data);
+        if (event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
       };
 
       this.mediaRecorder.onstop = () => {
+        console.log('Recording stopped');
         clearInterval(this.recordingTimer);
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audioMessage = {
-          type: 'audio',
-          content: audioUrl,
-          sender: this.currentUser,
-          isOwnMessage: true,
-          createdAt: new Date().toISOString(),
-          status: MessageTransmissionStatus.SENT,
-          reactions: [],
-          duration: this.recordingTime,
-        };
-        this.messages.push(audioMessage);
-        this.sentMessages.push({
-          type: 'audio',
-          content: audioUrl,
-          timestamp: new Date(),
-        });
-        console.log('Audio sent:', audioMessage);
+
+        if (this.audioChunks.length > 0) {
+          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audioMessage = {
+            type: 'audio',
+            content: audioUrl,
+            sender: this.currentUser,
+            isOwnMessage: true,
+            createdAt: new Date().toISOString(),
+            status: MessageTransmissionStatus.SENT,
+            reactions: [],
+            duration: this.recordingTime,
+          };
+          this.messages.push(audioMessage);
+          this.sentMessages.push({
+            type: 'audio',
+            content: audioUrl,
+            timestamp: new Date(),
+          });
+          console.log('Audio message pushed:', audioMessage);
+          this.buildMessageGroups();
+        }
+
+        this.isRecording = false;
         this.audioChunks = [];
         this.recordingTime = 0;
-        this.buildMessageGroups();
+        this.cdr.markForCheck();
+      };
+
+      this.mediaRecorder.onerror = (error) => {
+        console.error('MediaRecorder error:', error);
+        this.isRecording = false;
+        this.recordingTime = 0;
+        clearInterval(this.recordingTimer);
         this.cdr.markForCheck();
       };
 
       this.mediaRecorder.start();
     } catch (error) {
       console.error('Error accessing microphone:', error);
+      this.isRecording = false;
+      this.recordingTime = 0;
+      this.cdr.markForCheck();
+      alert(
+        'Microphone access denied. Please allow microphone access in your browser settings.',
+      );
     }
   }
 
   stopAudioRecording() {
+    console.log('Stopping audio recording...');
     if (this.mediaRecorder && this.isRecording) {
       this.mediaRecorder.stop();
-      this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      // Stop all tracks
+      this.mediaRecorder.stream.getTracks().forEach((track) => {
+        track.stop();
+        console.log('Track stopped');
+      });
       this.isRecording = false;
       clearInterval(this.recordingTimer);
       this.cdr.markForCheck();
     }
+  }
+
+  toggleAudioPlayback(event: any) {
+    const playBtn = event.currentTarget;
+    const audioContainer = playBtn.closest('.audio-message');
+    const audioElement = audioContainer.querySelector(
+      'audio',
+    ) as HTMLAudioElement;
+    const canvas = audioContainer.querySelector(
+      '.frequency-visualizer',
+    ) as HTMLCanvasElement;
+    const icon = playBtn.querySelector('.material-icons');
+    const audioId = canvas?.getAttribute('data-audio-id') || 'default';
+
+    if (!audioElement || !icon) return;
+
+    if (audioElement.paused) {
+      audioElement.play();
+      icon.textContent = 'pause';
+
+      // Initialize audio visualization
+      if (!this.audioContexts[audioId]) {
+        this.initAudioVisualization(audioElement, canvas, audioId);
+      }
+
+      // Start animation
+      this.animateFrequencies(canvas, audioId);
+    } else {
+      audioElement.pause();
+      icon.textContent = 'play_arrow';
+
+      // Cancel animation
+      if (this.animationFrames[audioId]) {
+        cancelAnimationFrame(this.animationFrames[audioId]);
+      }
+    }
+  }
+
+  initAudioVisualization(
+    audioElement: HTMLAudioElement,
+    canvas: HTMLCanvasElement,
+    audioId: string,
+  ) {
+    const AudioContext =
+      (window as any).AudioContext || (window as any).webkitAudioContext;
+    const audioContext = new AudioContext();
+    const source = audioContext.createMediaElementAudioSource(audioElement);
+    const analyser = audioContext.createAnalyser();
+
+    analyser.fftSize = 256;
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    this.audioContexts[audioId] = audioContext;
+    this.analysers[audioId] = analyser;
+    this.audioElements[audioId] = audioElement;
+
+    // Set canvas size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+  }
+
+  animateFrequencies(canvas: HTMLCanvasElement, audioId: string) {
+    const analyser = this.analysers[audioId];
+    const audioElement = this.audioElements[audioId];
+
+    if (!analyser || !audioElement) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const canvasCtx = canvas.getContext('2d');
+
+    if (!canvasCtx) return;
+
+    const draw = () => {
+      if (audioElement.paused) return;
+
+      this.animationFrames[audioId] = requestAnimationFrame(draw);
+
+      analyser.getByteFrequencyData(dataArray);
+
+      // Clear canvas with gradient background
+      const gradient = canvasCtx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      canvasCtx.fillStyle = gradient;
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw frequency bars
+      const barWidth = canvas.width / bufferLength;
+      let x = 0;
+
+      // Select frequencies to display (sample every 4th bar for cleaner look)
+      for (let i = 0; i < bufferLength; i += 4) {
+        const barHeight = (dataArray[i] / 255) * canvas.height;
+
+        // Create gradient for each bar
+        const barGradient = canvasCtx.createLinearGradient(
+          0,
+          canvas.height,
+          0,
+          canvas.height - barHeight,
+        );
+        barGradient.addColorStop(0, '#0095f6');
+        barGradient.addColorStop(0.5, '#1e90ff');
+        barGradient.addColorStop(1, '#0073cc');
+
+        canvasCtx.fillStyle = barGradient;
+        canvasCtx.fillRect(
+          x,
+          canvas.height - barHeight,
+          barWidth * 0.8,
+          barHeight,
+        );
+
+        // Add shadow for depth
+        canvasCtx.shadowColor = 'rgba(0, 149, 246, 0.5)';
+        canvasCtx.shadowBlur = 5;
+
+        x += barWidth;
+      }
+
+      canvasCtx.shadowColor = 'transparent';
+    };
+
+    draw();
   }
 }

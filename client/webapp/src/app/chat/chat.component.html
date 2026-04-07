@@ -1,3 +1,8 @@
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
+
 <div class="chat-container">
   <div *ngFor="let date of dates" class="day-group">
     <div>
@@ -53,14 +58,19 @@
             class="audio-message"
             [ngClass]="{ 'own-audio': message.isOwnMessage }"
           >
-            <audio
-              [src]="message.content"
-              controls
-              style="max-width: 200px"
-            ></audio>
-            <span class="audio-duration" *ngIf="message.duration">
-              Duration: {{ message.duration }}s
-            </span>
+            <div class="audio-player">
+              <button class="play-btn" (click)="toggleAudioPlayback($event)">
+                <span class="material-icons">play_arrow</span>
+              </button>
+              <div class="waveform-container">
+                <canvas
+                  class="frequency-visualizer"
+                  [attr.data-audio-id]="getMessageId(message, i, date)"
+                ></canvas>
+                <span class="time">{{ message.duration }}s</span>
+              </div>
+            </div>
+            <audio [src]="message.content" hidden></audio>
           </div>
         </li>
       </ul>
@@ -72,29 +82,33 @@
   <div class="input-wrapper">
     <div class="recording-indicator" *ngIf="isRecording">
       <span class="recording-dot"></span>
-      <span class="recording-text">Recording: {{ recordingTime }}s</span>
+      <span class="recording-text">{{ recordingTime }}s</span>
     </div>
     <input
       type="text"
       class="message-input"
       [(ngModel)]="messageInput"
       (keyup.enter)="sendMessage()"
-      placeholder="Type a message..."
+      placeholder="Message..."
       [disabled]="isRecording"
     />
     <button
-      class="send-btn"
+      class="icon-btn send-btn"
       (click)="sendMessage()"
       [disabled]="!messageInput.trim() || isRecording"
+      title="Send message"
     >
-      Send
+      <span class="material-icons">send</span>
     </button>
     <button
-      class="audio-btn"
+      class="icon-btn audio-btn"
       (click)="toggleAudioRecording()"
       [class.recording]="isRecording"
+      title="Record audio"
     >
-      {{ isRecording ? "⏹️ Stop" : "🎤 Record" }}
+      <span class="material-icons">{{
+        isRecording ? "stop_circle" : "mic"
+      }}</span>
     </button>
   </div>
 </div>
