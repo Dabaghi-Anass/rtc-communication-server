@@ -514,6 +514,14 @@ export class ChatComponent implements AfterViewInit {
         this.initAudioVisualization(audioElement, canvas, audioId);
       }
 
+      // Add ended event listener to reset icon when audio naturally finishes
+      audioElement.onended = () => {
+        icon.textContent = 'play_arrow';
+        if (this.animationFrames[audioId]) {
+          cancelAnimationFrame(this.animationFrames[audioId]);
+        }
+      };
+
       // Start animation
       this.animateFrequencies(canvas, audioId);
     } else {
@@ -546,10 +554,18 @@ export class ChatComponent implements AfterViewInit {
     this.analysers[audioId] = analyser;
     this.audioElements[audioId] = audioElement;
 
-    // Set canvas size
+    // Set canvas size with proper scaling
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * window.devicePixelRatio;
-    canvas.height = rect.height * window.devicePixelRatio;
+    const scale = window.devicePixelRatio || 1;
+
+    canvas.width = rect.width * scale;
+    canvas.height = rect.height * scale;
+
+    // Scale canvas drawing context
+    const canvasCtx = canvas.getContext('2d');
+    if (canvasCtx) {
+      canvasCtx.scale(scale, scale);
+    }
   }
 
   animateFrequencies(canvas: HTMLCanvasElement, audioId: string) {
@@ -564,6 +580,9 @@ export class ChatComponent implements AfterViewInit {
 
     if (!canvasCtx) return;
 
+    // Account for devicePixelRatio scaling
+    const scale = window.devicePixelRatio;
+
     const draw = () => {
       if (audioElement.paused) return;
 
@@ -571,20 +590,17 @@ export class ChatComponent implements AfterViewInit {
 
       analyser.getByteFrequencyData(dataArray);
 
-      // Clear canvas with gradient background
-      const gradient = canvasCtx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      canvasCtx.fillStyle = gradient;
+      // Clear canvas with dark background
+      canvasCtx.fillStyle = 'rgba(240, 240, 240, 0.1)';
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw frequency bars
-      const barWidth = canvas.width / bufferLength;
+      const barWidth = (canvas.width / bufferLength) * 4; // Sample every 4th bar
       let x = 0;
 
       // Select frequencies to display (sample every 4th bar for cleaner look)
       for (let i = 0; i < bufferLength; i += 4) {
-        const barHeight = (dataArray[i] / 255) * canvas.height;
+        const barHeight = (dataArray[i] / 255) * (canvas.height * 0.9);
 
         // Create gradient for each bar
         const barGradient = canvasCtx.createLinearGradient(
@@ -601,13 +617,15 @@ export class ChatComponent implements AfterViewInit {
         canvasCtx.fillRect(
           x,
           canvas.height - barHeight,
-          barWidth * 0.8,
-          barHeight,
+          Math.max(barWidth * 0.8, 1),
+          Math.max(barHeight, 1),
         );
 
-        // Add shadow for depth
-        canvasCtx.shadowColor = 'rgba(0, 149, 246, 0.5)';
-        canvasCtx.shadowBlur = 5;
+        // Add glow effect
+        canvasCtx.shadowColor = 'rgba(0, 149, 246, 0.6)';
+        canvasCtx.shadowBlur = 8;
+        canvasCtx.shadowOffsetX = 0;
+        canvasCtx.shadowOffsetY = 0;
 
         x += barWidth;
       }

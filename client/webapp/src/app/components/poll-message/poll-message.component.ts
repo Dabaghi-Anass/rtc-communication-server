@@ -23,6 +23,7 @@ export class PollMessageComponent {
   @Input() reactions: Array<{ emoji: string; user: string }> = [];
 
   showReactions = false;
+  showReactionMenu = false;
   MessageTransmissionStatus = MessageTransmissionStatus;
 
   reactionsMap = [
@@ -32,6 +33,25 @@ export class PollMessageComponent {
     { emoji: '😮', label: 'Wow' },
     { emoji: '😢', label: 'Sad' },
     { emoji: '😡', label: 'Angry' },
+  ];
+
+  allEmojis = [
+    { emoji: '👍', label: 'Like' },
+    { emoji: '❤️', label: 'Love' },
+    { emoji: '😆', label: 'Haha' },
+    { emoji: '😮', label: 'Wow' },
+    { emoji: '😢', label: 'Sad' },
+    { emoji: '😡', label: 'Angry' },
+    { emoji: '🤔', label: 'Thinking' },
+    { emoji: '😍', label: 'Love Eyes' },
+    { emoji: '🔥', label: 'Fire' },
+    { emoji: '👏', label: 'Clap' },
+    { emoji: '🎉', label: 'Party' },
+    { emoji: '💯', label: 'Perfect' },
+    { emoji: '✨', label: 'Sparkles' },
+    { emoji: '😂', label: 'Laughing' },
+    { emoji: '🤣', label: 'Rofl' },
+    { emoji: '😎', label: 'Cool' },
   ];
 
   get groupedReactions(): Array<{ emoji: string; count: number }> {
@@ -57,10 +77,52 @@ export class PollMessageComponent {
 
   addReaction(reaction: { emoji: string; label: string }) {
     this.showReactions = false;
+    // Remove current user's previous reaction (one reaction per user)
     this.reactions = this.reactions.filter((r) => r.user !== this.currentUser);
+    // Add the new one
     this.reactions = [
       ...this.reactions,
       { emoji: reaction.emoji, user: this.currentUser },
     ];
+  }
+
+  toggleReactionMenu() {
+    this.showReactionMenu = !this.showReactionMenu;
+  }
+
+  changeReaction(emoji: { emoji: string; label: string }) {
+    this.showReactionMenu = false;
+    // Remove current user's previous reaction
+    this.reactions = this.reactions.filter((r) => r.user !== this.currentUser);
+    // Add the new emoji
+    this.reactions = [
+      ...this.reactions,
+      { emoji: emoji.emoji, user: this.currentUser },
+    ];
+  }
+
+  toggleOption(option: any) {
+    option.selected = !option.selected;
+  }
+
+  getVotePercentages() {
+    const totalOptions = this.options.length;
+    if (totalOptions === 0) {
+      return { yes: 0, no: 0, total: 0 };
+    }
+
+    const yesCount = this.options.filter((opt) => opt.selected).length;
+    const noCount = totalOptions - yesCount;
+
+    const yesPercent = (yesCount / totalOptions) * 100;
+    const noPercent = (noCount / totalOptions) * 100;
+
+    return {
+      yesPercent: Math.round(yesPercent),
+      noPercent: Math.round(noPercent),
+      yesCount,
+      noCount,
+      total: totalOptions,
+    };
   }
 }
