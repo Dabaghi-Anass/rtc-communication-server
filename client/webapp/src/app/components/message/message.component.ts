@@ -24,6 +24,7 @@ export class MessageComponent {
   @Input() reactions: Array<{ emoji: string; user: string }> = [];
 
   showReactions = false;
+  showReactionMenu = false;
   MessageTransmissionStatus = MessageTransmissionStatus;
 
   reactionsMap = [
@@ -33,6 +34,25 @@ export class MessageComponent {
     { emoji: '😮', label: 'Wow' },
     { emoji: '😢', label: 'Sad' },
     { emoji: '😡', label: 'Angry' },
+  ];
+
+  allEmojis = [
+    { emoji: '👍', label: 'Like' },
+    { emoji: '❤️', label: 'Love' },
+    { emoji: '😆', label: 'Haha' },
+    { emoji: '😮', label: 'Wow' },
+    { emoji: '😢', label: 'Sad' },
+    { emoji: '😡', label: 'Angry' },
+    { emoji: '🤔', label: 'Thinking' },
+    { emoji: '😍', label: 'Love Eyes' },
+    { emoji: '🔥', label: 'Fire' },
+    { emoji: '👏', label: 'Clap' },
+    { emoji: '🎉', label: 'Party' },
+    { emoji: '💯', label: 'Perfect' },
+    { emoji: '✨', label: 'Sparkles' },
+    { emoji: '😂', label: 'Laughing' },
+    { emoji: '🤣', label: 'Rofl' },
+    { emoji: '😎', label: 'Cool' },
   ];
 
   /** Groups reactions by emoji for display */
@@ -65,6 +85,21 @@ export class MessageComponent {
     this.reactions = [
       ...this.reactions,
       { emoji: reaction.emoji, user: this.currentUser },
+    ];
+  }
+
+  toggleReactionMenu() {
+    this.showReactionMenu = !this.showReactionMenu;
+  }
+
+  changeReaction(emoji: { emoji: string; label: string }) {
+    this.showReactionMenu = false;
+    // Remove current user's previous reaction
+    this.reactions = this.reactions.filter((r) => r.user !== this.currentUser);
+    // Add the new emoji
+    this.reactions = [
+      ...this.reactions,
+      { emoji: emoji.emoji, user: this.currentUser },
     ];
   }
 }

@@ -47,6 +47,7 @@
             />
           </svg>
         </button>
+
         <div class="reaction-popup" *ngIf="showReactions">
           <button
             *ngFor="let r of reactionsMap"
@@ -55,6 +56,32 @@
             (click)="addReaction(r)"
           >
             {{ r.emoji }}
+          </button>
+          <button
+            class="reaction-menu-btn btn no-bg-btn rounded"
+            (click)="toggleReactionMenu()"
+            title="Change emoji"
+          >
+            <svg
+              fill="#333"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 200 800"
+              style="width: 20px; height: 20px"
+            >
+              <circle cx="100" cy="200" r="64" fill="#333" />
+              <circle cx="100" cy="400" r="64" fill="#333" />
+              <circle cx="100" cy="600" r="64" fill="#333" />
+            </svg>
+          </button>
+        </div>
+        <div class="reaction-menu-dropdown" *ngIf="showReactionMenu">
+          <button
+            *ngFor="let emoji of allEmojis"
+            class="emoji-option"
+            [title]="emoji.label"
+            (click)="changeReaction(emoji)"
+          >
+            {{ emoji.emoji }}
           </button>
         </div>
       </div>
