@@ -4,6 +4,8 @@ import {
   ChangeDetectionStrategy,
   AfterViewInit,
   ChangeDetectorRef,
+  ElementRef,
+  ViewChild,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -24,7 +26,8 @@ import { MessageTransmissionStatus } from '../../types/message';
 export class ChatComponent implements AfterViewInit {
   messageGroupWidths: { [key: string]: number } = {};
   revealedMessages = new Set<string>();
-
+  @ViewChild('messagesContainer')
+  messagesContainer!: ElementRef<HTMLInputElement>;
   currentUser = 'Bob';
 
   // Message and Audio Input
@@ -387,6 +390,17 @@ export class ChatComponent implements AfterViewInit {
       this.messageInput = '';
       this.buildMessageGroups();
       this.cdr.markForCheck();
+
+      if (this.messagesContainer.nativeElement) {
+        setTimeout(() => {
+          const el = this.messagesContainer.nativeElement;
+          el.scrollTop = el.scrollHeight;
+        }, 0);
+        setTimeout(() => {
+          const el = document.body;
+          el.scrollTop = el.scrollHeight;
+        }, 0);
+      }
     }
   }
 
